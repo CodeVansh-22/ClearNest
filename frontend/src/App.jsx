@@ -6,13 +6,20 @@ import { useAuthStore } from './hooks/useAuth';
 import './index.css';
 
 function App() {
-  const { fetchProfile, token } = useAuthStore();
+  const { fetchProfile, token, isInitialized, loading } = useAuthStore();
 
   useEffect(() => {
-    if (token) {
-      fetchProfile();
-    }
-  }, [token, fetchProfile]);
+    fetchProfile();
+  }, [fetchProfile]);
+
+  // Prevent UI flickering while restoring session
+  if (!isInitialized && loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <ThemeProvider>

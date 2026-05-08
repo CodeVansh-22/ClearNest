@@ -12,10 +12,10 @@ const AuthPage = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        full_name: '',
+        fullName: '',
         role: 'RESIDENT',
-        society_code: '',
-        flat_number: ''
+        societyCode: '',
+        flatNumber: ''
     });
     
     const { login, register, googleLogin, loading, error } = useAuthStore();
@@ -30,8 +30,8 @@ const AuthPage = () => {
         const success = await googleLogin({
             credential: credentialResponse.credential,
             role: formData.role,
-            society_code: formData.society_code,
-            flat_number: formData.flat_number
+            societyCode: formData.societyCode,
+            flatNumber: formData.flatNumber
         });
         if (success) {
             const role = useAuthStore.getState().user?.role;
@@ -46,7 +46,7 @@ const AuthPage = () => {
                 email: formData.email, 
                 password: formData.password,
                 role: formData.role,
-                society_code: formData.society_code
+                societyCode: formData.societyCode
             });
             if (success) {
                 const role = useAuthStore.getState().user?.role;
@@ -121,8 +121,8 @@ const AuthPage = () => {
                                         type="text" 
                                         placeholder="Enter Society Access Code"
                                         className="w-full bg-muted/50 border border-border rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-                                        value={formData.society_code}
-                                        onChange={(e) => setFormData({...formData, society_code: e.target.value.toUpperCase()})}
+                                        value={formData.societyCode}
+                                        onChange={(e) => setFormData({...formData, societyCode: e.target.value.toUpperCase()})}
                                     />
                                 </div>
                                 <p className="text-[10px] text-muted-foreground">Ask your committee for the 8-digit unique code.</p>
@@ -131,7 +131,7 @@ const AuthPage = () => {
                             <div className="flex gap-4">
                                 <button onClick={() => setStep(1)} className="flex-1 py-4 border border-border rounded-2xl font-bold text-sm">Back</button>
                                 <button 
-                                    disabled={!formData.society_code}
+                                    disabled={!formData.societyCode}
                                     onClick={() => setStep(3)} 
                                     className="flex-[2] bg-[#0F172A] text-white py-4 rounded-2xl font-bold text-sm hover:opacity-90 transition-all disabled:opacity-50"
                                 >
@@ -157,8 +157,8 @@ const AuthPage = () => {
                                             <input 
                                                 type="text" required
                                                 className="w-full bg-muted/50 border border-border rounded-2xl py-3.5 pl-12 text-sm focus:ring-2 focus:ring-accent"
-                                                value={formData.full_name}
-                                                onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                                                value={formData.fullName}
+                                                onChange={(e) => setFormData({...formData, fullName: e.target.value})}
                                             />
                                         </div>
                                     </div>

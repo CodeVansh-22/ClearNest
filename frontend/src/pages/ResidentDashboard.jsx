@@ -36,7 +36,7 @@ const ResidentDashboard = () => {
       {/* Welcome Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.full_name || 'Resident'}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.fullName || 'Resident'}</h1>
           <p className="text-muted-foreground mt-1">Here's what's happening in ClearNest today.</p>
         </div>
         <div className="flex items-center gap-2 text-sm bg-accent/20 text-primary px-4 py-2 rounded-full font-bold border border-accent/30">
@@ -136,7 +136,7 @@ const ResidentDashboard = () => {
                     }`}>
                       {ticket.status}
                     </span>
-                    <span className="text-[10px] font-medium text-muted-foreground">{new Date(ticket.created_at).toLocaleDateString()}</span>
+                    <span className="text-[10px] font-medium text-muted-foreground">{new Date(ticket.createdAt).toLocaleDateString()}</span>
                   </div>
                   <h4 className="font-semibold text-sm group-hover:text-primary transition-colors">{ticket.title}</h4>
                   <p className="text-xs text-muted-foreground mt-1 truncate">{ticket.description}</p>

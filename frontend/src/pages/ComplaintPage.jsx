@@ -91,7 +91,7 @@ const ComplaintPage = () => {
                     </div>
                     <div>
                       <h3 className="font-bold">{c.title}</h3>
-                      <p className="text-xs text-muted-foreground">ID: #CN-{c._id.slice(-6).toUpperCase()} • {new Date(c.created_at).toLocaleDateString()}</p>
+                      <p className="text-xs text-muted-foreground">ID: #CN-{c._id.slice(-6).toUpperCase()} • {new Date(c.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold border ${
