@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+.env
+uploads/
+firebase-credentials.json
+.vscode/
+.idea/
+*.log
+clearnest.db
