@@ -1,0 +1,42 @@
+{
+  "name": "clearnest-api",
+  "version": "1.0.0",
+  "description": "ClearNest — Transparent Smart Society Management SaaS Platform",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "lint": "eslint src/",
+    "seed": "node src/seeds/index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.0",
+    "firebase-admin": "^13.0.2",
+    "google-auth-library": "^10.6.2",
+    "helmet": "^8.0.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.12.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "razorpay": "^2.9.5",
+    "slugify": "^1.6.6",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.1.0",
+    "validator": "^13.12.0",
+    "winston": "^3.17.0",
+    "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
