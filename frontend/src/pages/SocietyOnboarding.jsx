@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Building2, MapPin, Hash, Mail, ArrowRight, Loader2, CheckCircle2, Copy, Users, Shield } from 'lucide-react';
+import { Building2, MapPin, Hash, Mail, ArrowRight, Loader2, CheckCircle2, Copy, Users, Shield, User, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import logo from '../assets/logo.png';
@@ -12,11 +12,13 @@ const SocietyOnboarding = () => {
     const [success, setSuccess] = useState(false);
     const [societyData, setSocietyData] = useState(null);
     const [formData, setFormData] = useState({
-        society_name: '',
+        societyName: '',
         city: '',
         address: '',
-        total_flats: '',
-        admin_email: ''
+        totalFlats: '',
+        adminName: '',
+        adminEmail: '',
+        adminPassword: ''
     });
 
     const handleSubmit = async (e) => {
@@ -115,9 +117,9 @@ const SocietyOnboarding = () => {
                     <div className="bg-muted/50 p-8 rounded-[2rem] border border-border mb-8">
                         <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Unique Society Code</p>
                         <div className="flex items-center justify-center gap-4">
-                            <span className="text-4xl font-black tracking-widest text-primary">{societyData.society_code}</span>
+                            <span className="text-4xl font-black tracking-widest text-primary">{societyData?.society?.code || societyData?.data?.society?.code || societyData?.society_code}</span>
                             <button 
-                                onClick={() => navigator.clipboard.writeText(societyData.society_code)}
+                                onClick={() => navigator.clipboard.writeText(societyData?.society?.code || societyData?.data?.society?.code || societyData?.society_code)}
                                 className="p-2 hover:bg-white rounded-lg transition-colors"
                             >
                                 <Copy className="w-5 h-5 text-muted-foreground" />
@@ -186,7 +188,22 @@ const SocietyOnboarding = () => {
                                     type="text" required
                                     placeholder="e.g. Green Valley Apartments"
                                     className="w-full bg-muted/30 border border-border rounded-xl py-3 pl-12 text-sm focus:ring-2 focus:ring-primary"
-                                    onChange={e => setFormData({...formData, society_name: e.target.value})}
+                                    value={formData.societyName}
+                                    onChange={e => setFormData({...formData, societyName: e.target.value})}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Address</label>
+                            <div className="relative">
+                                <MapPin className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <input 
+                                    type="text" required
+                                    placeholder="e.g. 123 Main St, Area"
+                                    className="w-full bg-muted/30 border border-border rounded-xl py-3 pl-12 text-sm focus:ring-2 focus:ring-primary"
+                                    value={formData.address}
+                                    onChange={e => setFormData({...formData, address: e.target.value})}
                                 />
                             </div>
                         </div>
@@ -200,6 +217,7 @@ const SocietyOnboarding = () => {
                                         type="text" required
                                         placeholder="Mumbai"
                                         className="w-full bg-muted/30 border border-border rounded-xl py-3 pl-12 text-sm"
+                                        value={formData.city}
                                         onChange={e => setFormData({...formData, city: e.target.value})}
                                     />
                                 </div>
@@ -212,9 +230,24 @@ const SocietyOnboarding = () => {
                                         type="number" required
                                         placeholder="120"
                                         className="w-full bg-muted/30 border border-border rounded-xl py-3 pl-12 text-sm"
-                                        onChange={e => setFormData({...formData, total_flats: e.target.value})}
+                                        value={formData.totalFlats}
+                                        onChange={e => setFormData({...formData, totalFlats: e.target.value})}
                                     />
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Admin Name</label>
+                            <div className="relative">
+                                <User className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <input 
+                                    type="text" required
+                                    placeholder="John Doe"
+                                    className="w-full bg-muted/30 border border-border rounded-xl py-3 pl-12 text-sm"
+                                    value={formData.adminName}
+                                    onChange={e => setFormData({...formData, adminName: e.target.value})}
+                                />
                             </div>
                         </div>
 
@@ -226,7 +259,22 @@ const SocietyOnboarding = () => {
                                     type="email" required
                                     placeholder="admin@society.com"
                                     className="w-full bg-muted/30 border border-border rounded-xl py-3 pl-12 text-sm"
-                                    onChange={e => setFormData({...formData, admin_email: e.target.value})}
+                                    value={formData.adminEmail}
+                                    onChange={e => setFormData({...formData, adminEmail: e.target.value})}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Admin Password</label>
+                            <div className="relative">
+                                <Lock className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <input 
+                                    type="password" required
+                                    placeholder="••••••••"
+                                    className="w-full bg-muted/30 border border-border rounded-xl py-3 pl-12 text-sm"
+                                    value={formData.adminPassword}
+                                    onChange={e => setFormData({...formData, adminPassword: e.target.value})}
                                 />
                             </div>
                         </div>

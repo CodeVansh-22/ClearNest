@@ -10,6 +10,7 @@ import VotingPage from '../pages/VotingPage';
 import VendorBiddingPage from '../pages/VendorBiddingPage';
 import AuthPage from '../pages/AuthPage';
 import SocietyOnboarding from '../pages/SocietyOnboarding';
+import VerifyVisitor from '../pages/VerifyVisitor';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 const AppRoutes = () => {
@@ -20,6 +21,7 @@ const AppRoutes = () => {
       <Route path="/register-society" element={<SocietyOnboarding />} />
       <Route path="/register%20society" element={<Navigate to="/register-society" replace />} />
       <Route path="/register society" element={<Navigate to="/register-society" replace />} />
+      <Route path="/verify-visitor" element={<VerifyVisitor />} />
       
       <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>

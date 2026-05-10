@@ -6,6 +6,7 @@ import complaintRoutes from './complaint.routes.js';
 import voteRoutes from './vote.routes.js';
 import vendorRoutes from './vendor.routes.js';
 import uploadRoutes from './upload.routes.js';
+import visitorRoutes from './visitor.routes.js';
 
 const router = Router();
 
@@ -16,6 +17,7 @@ router.use('/complaints', complaintRoutes);
 router.use('/votes', voteRoutes);
 router.use('/vendors', vendorRoutes);
 router.use('/upload', uploadRoutes);
+router.use('/visitors', visitorRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

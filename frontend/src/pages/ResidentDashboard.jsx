@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowUpRight, 
   ArrowDownRight, 
@@ -10,17 +10,34 @@ import {
   ChevronRight,
   TrendingUp,
   Sparkles,
-  Loader2
+  Loader2,
+  QrCode,
+  Plus,
+  X,
+  Mail,
+  User as UserIcon,
+  Calendar
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../hooks/useAuth';
 import { useLedger } from '../hooks/useLedger';
 import { useComplaints } from '../hooks/useComplaints';
+import api from '../api/axios';
 
 const ResidentDashboard = () => {
   const { user } = useAuthStore();
   const { transactions, analytics, loading: ledgerLoading } = useLedger();
   const { complaints, loading: complaintsLoading } = useComplaints();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [generatedToken, setGeneratedToken] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    visitDate: '',
+    purpose: ''
+  });
 
   const loading = ledgerLoading || complaintsLoading;
 
@@ -30,6 +47,21 @@ const ResidentDashboard = () => {
 
   const income = analytics?.income || 0;
   const expense = analytics?.expense || 0;
+
+  const handleInvite = async (e) => {
+    e.preventDefault();
+    setInviteLoading(true);
+    try {
+      const res = await api.post('/visitors/invite', formData);
+      const token = res.data?.data?.visitor?.token || res.data?.visitor?.token;
+      setGeneratedToken(token);
+    } catch (err) {
+      console.error("Invite Error:", err);
+      alert("Failed to create invite");
+    } finally {
+      setInviteLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -120,6 +152,28 @@ const ResidentDashboard = () => {
 
         {/* Sidebar Widgets */}
         <div className="space-y-8">
+          {/* Visitor Invites Widget */}
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <QrCode className="w-5 h-5 text-primary" />
+                Visitor Invites
+              </h2>
+              <button 
+                onClick={() => { setIsModalOpen(true); setGeneratedToken(''); }}
+                className="text-xs font-bold flex items-center gap-1 bg-primary text-white px-3 py-1.5 rounded-full hover:opacity-90 transition-all"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Invite
+              </button>
+            </div>
+            <div className="bg-card p-4 rounded-2xl border border-border">
+              <p className="text-xs text-muted-foreground text-center py-4">
+                No active invites. Click "Invite" to generate a QR code for your guests.
+              </p>
+            </div>
+          </section>
+
           {/* Active Complaints */}
           <section className="space-y-4">
             <h2 className="text-xl font-bold flex items-center gap-2">
@@ -146,6 +200,113 @@ const ResidentDashboard = () => {
           </section>
         </div>
       </div>
+
+      {/* Invite Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl relative"
+            >
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="absolute right-6 top-6 text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {!generatedToken ? (
+                <>
+                  <h2 className="text-2xl font-bold mb-6">Invite Guest</h2>
+                  <form onSubmit={handleInvite} className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Guest Name</label>
+                      <div className="relative">
+                        <UserIcon className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <input 
+                          type="text" required
+                          className="w-full bg-muted/50 border border-border rounded-xl py-3 pl-12 text-sm focus:ring-2 focus:ring-primary"
+                          placeholder="John Doe"
+                          onChange={e => setFormData({...formData, name: e.target.value})}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Phone Number</label>
+                      <div className="relative">
+                        <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <input 
+                          type="text"
+                          className="w-full bg-muted/50 border border-border rounded-xl py-3 pl-12 text-sm focus:ring-2 focus:ring-primary"
+                          placeholder="Optional"
+                          onChange={e => setFormData({...formData, phone: e.target.value})}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Visit Date</label>
+                      <div className="relative">
+                        <Calendar className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <input 
+                          type="date" required
+                          className="w-full bg-muted/50 border border-border rounded-xl py-3 pl-12 text-sm focus:ring-2 focus:ring-primary"
+                          onChange={e => setFormData({...formData, visitDate: e.target.value})}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Purpose</label>
+                      <input 
+                        type="text"
+                        className="w-full bg-muted/50 border border-border rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary"
+                        placeholder="e.g. Social Visit"
+                        onChange={e => setFormData({...formData, purpose: e.target.value})}
+                      />
+                    </div>
+
+                    <button 
+                      disabled={inviteLoading}
+                      className="w-full bg-[#0F172A] text-white py-4 rounded-xl font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2 mt-4 disabled:opacity-50"
+                    >
+                      {inviteLoading ? <Loader2 className="animate-spin w-5 h-5" /> : 'Generate Invite'}
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <div className="text-center py-4">
+                  <h2 className="text-2xl font-bold mb-2">Invite Generated!</h2>
+                  <p className="text-sm text-muted-foreground mb-6">Share this QR code with your guest.</p>
+                  
+                  <div className="bg-muted/50 p-6 rounded-2xl inline-block mb-6 border border-border">
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.origin + '/verify-visitor?token=' + generatedToken)}`} 
+                      alt="QR Code"
+                      className="mx-auto"
+                    />
+                  </div>
+
+                  <p className="text-xs text-muted-foreground mb-6 break-all">
+                    Token: {generatedToken}
+                  </p>
+
+                  <button 
+                    onClick={() => setIsModalOpen(false)}
+                    className="w-full bg-[#0F172A] text-white py-4 rounded-xl font-bold hover:opacity-90 transition-all"
+                  >
+                    Done
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

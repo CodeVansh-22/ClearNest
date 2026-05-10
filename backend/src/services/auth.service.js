@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import User from '../models/User.js';
 import Society from '../models/Society.js';
+import Flat from '../models/Flat.js';
 import ApiError from '../utils/ApiError.js';
 import config from '../config/env.js';
 import { sanitizeUser } from '../utils/helpers.js';
@@ -50,7 +51,7 @@ class AuthService {
   /**
    * Register a new user with email and password.
    */
-  static async register({ fullName, email, password, role, societyCode, flatNumber, phone }) {
+  static async register({ fullName, email, password, role, societyCode, flatNumber, block = 'A', phone }) {
     // Check existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -84,6 +85,29 @@ class AuthService {
       authProvider: 'local',
       isVerified: false,
     });
+
+    // Link user to flat if provided
+    if (flatNumber && societyId) {
+      const flat = await Flat.findOne({ societyId, flatNumber, block });
+      if (flat) {
+        if (role === 'OWNER') {
+          flat.ownerId = user._id;
+        }
+        // Always add to residents if not already there
+        const isResident = flat.residents.some(r => r.userId.toString() === user._id.toString());
+        if (!isResident) {
+          flat.residents.push({
+            userId: user._id,
+            relation: role === 'TENANT' ? 'Tenant' : 'Owner',
+            moveInDate: new Date(),
+          });
+        }
+        flat.isOccupied = true;
+        await flat.save();
+      } else {
+        throw ApiError.notFound(`Flat ${flatNumber} not found in block ${block}. Please check with your society admin.`);
+      }
+    }
 
     const tokens = generateTokenPair(user._id, user.role, user.societyId);
     await storeRefreshToken(user, tokens.refreshToken);
